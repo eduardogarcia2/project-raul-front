@@ -3,6 +3,9 @@ import { useParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import axios from 'axios';
 import SimpleModal from '../components/SimpleModal';
+import ContentPasteIcon from '@mui/icons-material/ContentPaste';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import { Tooltip } from '@mui/material';
 
 function SpaceDetails() {
     const { id } = useParams();
@@ -12,6 +15,7 @@ function SpaceDetails() {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [file, setFile] = useState(null);
+    const [isCopied, setIsCopied] = useState({});
 
     const fetchSpaceDetails = async () => {
         try {
@@ -68,7 +72,24 @@ function SpaceDetails() {
             console.error('Error opening file:', error);
         }
     };
-    
+
+    const copyLinkToClipboard = async (cardId: any) => {
+        try {
+            const response = await axios.get(`http://localhost:5000/api/card/${cardId}/file`, {
+                responseType: 'blob', // Important to get the file as a Blob
+                headers: { "token": token }
+            });
+            const fileURL = URL.createObjectURL(response.data);
+            await navigator.clipboard.writeText(fileURL);
+            setIsCopied(prevState => ({ ...prevState, [cardId]: true }));
+            setTimeout(() => {
+                setIsCopied(prevState => ({ ...prevState, [cardId]: false }));
+            }, 800);
+        } catch (error) {
+            console.error('Error copying link to clipboard:', error);
+        }
+    };
+
 
     return (
         <>
@@ -80,9 +101,14 @@ function SpaceDetails() {
             {/* CARDS */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {spaceDetails.map((detail: any) => (
-                    <div key={detail.id} className="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mt-5">
+                    <div key={detail.id} className="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mt-5 relative">
                         <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{detail.title}</h5>
                         <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{detail.description}</p>
+                        {/* @ts-ignore */}
+                        <Tooltip title={isCopied[detail.id] ? "Enlace copiado" : "Copiar enlace"} className='cursor-pointer'>
+                            {/* @ts-ignore */}
+                            <button onClick={() => copyLinkToClipboard(detail.id)} className='text-white absolute top-4 right-4'>{isCopied[detail.id] ? <AssignmentTurnedInIcon /> : <ContentPasteIcon />}</button>
+                        </Tooltip>
                         <button onClick={() => openFile(detail.id)} className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                             Ver documento
                             <svg className="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">

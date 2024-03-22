@@ -5,6 +5,7 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
     './pages/**/*.{html,js}',
     './components/**/*.{html,js}',
+    'node_modules/flowbite-react/lib/esm/**/*.js',
   ],
   theme: {
     extend: {},
