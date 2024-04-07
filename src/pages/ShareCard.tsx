@@ -7,7 +7,7 @@ function ShareCard() {
   const [card, setCard] = useState({
     id: id,
     title: "",
-    description: ""
+    description: "",
   });
 
   const IP = "192.168.1.11"; //Cambiar la IP dependiendo de la red
@@ -15,9 +15,7 @@ function ShareCard() {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await axios.get(
-          `http://${IP}:5000/api/card/${id}`
-        );
+        const response = await axios.get(`http://${IP}:5000/api/card/${id}`);
         setCard(response.data.data[0]);
         console.log(card);
       } catch (error) {
@@ -30,16 +28,22 @@ function ShareCard() {
 
   const openFile = async (cardId: any) => {
     try {
-        const response = await axios.get(`http://${IP}:5000/api/card/${cardId}/file`, {
-            responseType: 'blob', // Important to get the file as a Blob
-        });
-        const file = new Blob([response.data], { type: 'application/pdf' });
-        const fileURL = URL.createObjectURL(file);
-        window.open(fileURL, '_blank');
+      const response = await axios.get(
+        `http://${IP}:5000/api/card/${cardId}/file`,
+        {
+          responseType: "blob", // Important to get the file as a Blob
+        }
+      );
+
+      const contentType = response.headers['content-type'];
+
+      const file = new Blob([response.data], { type: contentType });
+      const fileURL = URL.createObjectURL(file);
+      window.open(fileURL, "_blank");
     } catch (error) {
-        console.error('Error opening file:', error);
+      console.error("Error opening file:", error);
     }
-};
+  };
 
   return (
     <div className="flex justify-center items-center h-screen">

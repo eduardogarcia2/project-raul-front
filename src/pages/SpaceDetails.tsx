@@ -65,7 +65,10 @@ function SpaceDetails() {
                 responseType: 'blob', // Important to get the file as a Blob
                 // headers: { "token": token }
             });
-            const file = new Blob([response.data], { type: 'application/pdf' });
+
+            const contentType = response.headers['content-type'];
+
+            const file = new Blob([response.data], { type: contentType });
             const fileURL = URL.createObjectURL(file);
             window.open(fileURL, '_blank');
         } catch (error) {
@@ -129,7 +132,7 @@ function SpaceDetails() {
                     </div>
                     <div className="mb-4">
                         <label htmlFor="file" className="block mb-2 text-sm font-medium text-white">Documento</label>
-                        <input id="file" type="file" accept="application/pdf" onChange={(e: any) => setFile(e?.target?.files[0])} required className='text-white' />
+                        <input id="file" type="file" accept="image/*, video/*, application/pdf" onChange={(e: any) => setFile(e?.target?.files[0])} required className='text-white' />
                     </div>
 
                     <button type="submit" className="text-white mt-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full p-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Subir</button>
