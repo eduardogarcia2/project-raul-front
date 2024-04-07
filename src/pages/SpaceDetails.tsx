@@ -63,7 +63,7 @@ function SpaceDetails() {
         try {
             const response = await axios.get(`http://localhost:5000/api/card/${cardId}/file`, {
                 responseType: 'blob', // Important to get the file as a Blob
-                headers: { "token": token }
+                // headers: { "token": token }
             });
             const file = new Blob([response.data], { type: 'application/pdf' });
             const fileURL = URL.createObjectURL(file);
@@ -74,20 +74,16 @@ function SpaceDetails() {
     };
 
     const copyLinkToClipboard = async (cardId: any) => {
-        try {
-            const response = await axios.get(`http://localhost:5000/api/card/${cardId}/file`, {
-                responseType: 'blob', // Important to get the file as a Blob
-                headers: { "token": token }
-            });
-            const fileURL = URL.createObjectURL(response.data);
-            await navigator.clipboard.writeText(fileURL);
-            setIsCopied(prevState => ({ ...prevState, [cardId]: true }));
-            setTimeout(() => {
-                setIsCopied(prevState => ({ ...prevState, [cardId]: false }));
-            }, 800);
-        } catch (error) {
-            console.error('Error copying link to clipboard:', error);
-        }
+      try {
+        const url = `http://localhost:5173/card/${cardId}/share`;
+        await navigator.clipboard.writeText(url);
+        setIsCopied(true);
+        setTimeout(() => {
+          setIsCopied(false);
+        }, 800);
+      } catch (error) {
+        console.error('Error copying link to clipboard:', error);
+      }
     };
 
 

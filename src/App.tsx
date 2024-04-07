@@ -8,6 +8,8 @@ import { PublicRoute } from "./components/PublicRoute";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import AddSpaces from "./pages/AddSpaces";
 import SpaceDetails from "./pages/SpaceDetails";
+import ShareCard from "./pages/ShareCard";
+
 
 function App() {
   const isAuth = useAuthStore(state => state.isAuth);
@@ -15,6 +17,7 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/card/:id/share" element={<ShareCard/>}/>
         <Route path="/login" element={<PublicRoute isAuth={isAuth}><Login /></PublicRoute>} />
         <Route element={<ProtectedRoute isAllowed={isAuth}><Layout /></ProtectedRoute>}>
           <Route path="/" element={<Home />} />
