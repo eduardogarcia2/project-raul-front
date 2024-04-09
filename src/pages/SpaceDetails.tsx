@@ -5,7 +5,8 @@ import axios from 'axios';
 import SimpleModal from '../components/SimpleModal';
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import { Tooltip } from '@mui/material';
+import { Icon, Tooltip } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 function SpaceDetails() {
     const { id } = useParams();
@@ -77,18 +78,28 @@ function SpaceDetails() {
     };
 
     const copyLinkToClipboard = async (cardId: any) => {
-      try {
-        const url = `http://localhost:5173/card/${cardId}/share`;
-        await navigator.clipboard.writeText(url);
-        setIsCopied(true);
-        setTimeout(() => {
-          setIsCopied(false);
-        }, 800);
-      } catch (error) {
-        console.error('Error copying link to clipboard:', error);
-      }
+        try {
+            const url = `http://localhost:5173/card/${cardId}/share`;
+            await navigator.clipboard.writeText(url);
+            setIsCopied(true);
+            setTimeout(() => {
+                setIsCopied(false);
+            }, 800);
+        } catch (error) {
+            console.error('Error copying link to clipboard:', error);
+        }
     };
 
+    const deleteCard = async (cardId: any) => {
+        try {
+            await axios.delete(`http://localhost:5000/api/spaces/${id}/cards/${cardId}`, {
+                headers: { "token": token }
+            });
+            fetchSpaceDetails();
+        } catch (error) {
+            console.error('Error deleting card:', error);
+        }
+    };
 
     return (
         <>
@@ -114,6 +125,9 @@ function SpaceDetails() {
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
                             </svg>
                         </button>
+                        <Tooltip title="Eliminar">
+                            <Icon component={DeleteIcon} className='absolute text-white bottom-6 right-4 cursor-pointer' onClick={() => deleteCard(detail.id)}/>
+                        </Tooltip>
                     </div>
                 ))}
             </div>

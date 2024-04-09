@@ -10,14 +10,13 @@ function ShareCard() {
     description: "",
   });
 
-  const IP = "192.168.1.11"; //Cambiar la IP dependiendo de la red
+  const IP = "localhost"; //Cambiar la IP dependiendo de la red
 
   useEffect(() => {
     const getData = async () => {
       try {
         const response = await axios.get(`http://${IP}:5000/api/card/${id}`);
         setCard(response.data.data[0]);
-        console.log(card);
       } catch (error) {
         console.error("Error fetching space cards:", error);
       }
